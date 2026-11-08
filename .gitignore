@@ -9,3 +9,8 @@ dist
 
 # Emacs
 .dir-locals.el
+
+# Nix
+/.direnv/
+/.pre-commit-config.yaml
+/result
