@@ -12,18 +12,18 @@ account.
 
 Lieer will not and can not:
 
-* Add or delete messages on your remote account (except syncing the `trash` or `spam` label to messages, and those messages will eventually be [deleted](https://support.google.com/mail/answer/7401?co=GENIE.Platform%3DDesktop&hl=en))
-* Modify messages other than their labels
+- Add or delete messages on your remote account (except syncing the `trash` or `spam` label to messages, and those messages will eventually be [deleted](https://support.google.com/mail/answer/7401?co=GENIE.Platform%3DDesktop&hl=en))
+- Modify messages other than their labels
 
 While Lieer has been used to successfully synchronize millions of messages and tags by now, it comes with **NO WARRANTIES**.
 
 ## Requirements
 
-* Python 3
-* Notmuch 0.30+ for `notmuch2` Python bindings
-* `google_api_python_client` (sometimes `google-api-python-client`)
-* `google_auth_oauthlib`
-* `tqdm` (optional - for progress bar)
+- Python 3
+- Notmuch 0.30+ for `notmuch2` Python bindings
+- `google_api_python_client` (sometimes `google-api-python-client`)
+- `google_auth_oauthlib`
+- `tqdm` (optional - for progress bar)
 
 ## Installation
 
@@ -126,11 +126,11 @@ We try to support valid combinations from MUAs that make use of recipients
 passed as arguments. Additional recipients are ignored, but validated. The
 following combinations are OK:
 
- - When `-t` is passed, we need to check for the CLI-passed recipients to be
-   equal or a subset of the ones passed in the headers.
+- When `-t` is passed, we need to check for the CLI-passed recipients to be
+  equal or a subset of the ones passed in the headers.
 
- - When `-t` is not passed, all header-passed recipients need to be provided in
-   the CLI as well.
+- When `-t` is not passed, all header-passed recipients need to be provided in
+  the CLI as well.
 
 This avoids silently not sending mail to some recipients (pretending we did),
 or sending mail to recipients we didn't want to send to again.
@@ -152,9 +152,9 @@ the `Subject:` header must also match, but this does not seem to be necessary
 
 Note that the following flags are ignored for `sendmail` compatibility:
 
-  - `-f` (ignored, set envelope `From:` yourself)
-  - `-o` (ignored)
-  - `-i` (always implied, not bothered by single `.`'s)
+- `-f` (ignored, set envelope `From:` yourself)
+- `-o` (ignored)
+- `-i` (always implied, not bothered by single `.`'s)
 
 There are instructions for using this in your email client (for example Emacs) in the [wiki](https://github.com/gauteh/lieer/wiki/GNU-Emacs-and-Lieer).
 
@@ -170,30 +170,30 @@ Lieer can be configured using `gmi set`. Use without any options to get a list o
 
 **`Timeout`** is the timeout in seconds used for the HTTP connection to GMail. `0` means the forever or system error/timeout, [whichever occurs first](https://github.com/gauteh/lieer/issues/83#issuecomment-396487919).
 
-**`File extension`** is an optional argument to include the specified extension in local file names (e.g., `mbox`) which can be useful for indexing them with third-party programs.  
+**`File extension`** is an optional argument to include the specified extension in local file names (e.g., `mbox`) which can be useful for indexing them with third-party programs.
 
-*Important:* If you change this setting after synchronizing, the best case scenario is that all files will appear to not have being pulled down and will be re-downloaded (and duplicated with a different extension in the maildir). There might also be changes to tags. You should in theory be able to change it by renaming all files, but since this will update the lastmod you will get a check on all files.
+_Important:_ If you change this setting after synchronizing, the best case scenario is that all files will appear to not have being pulled down and will be re-downloaded (and duplicated with a different extension in the maildir). There might also be changes to tags. You should in theory be able to change it by renaming all files, but since this will update the lastmod you will get a check on all files.
 
 **`Drop non existing labels`** can be used to silently ignore errors where GMail gives us a label identifier which is not associated with a label. See [Caveats](#caveats).
 
-**`Replace slash with dot`** is used to replace the sub-label separator (`/`) with a dot (`.`). I think this is easier to work with. *Important*: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
+**`Replace slash with dot`** is used to replace the sub-label separator (`/`) with a dot (`.`). I think this is easier to work with. _Important_: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
 
-**`Ignore tags (local)`** can be used to specify a list of tags which should not be synced from local to remote (e.g. [`new`](#usage)). In addition to the user-configured tags these tags are ignored: `'attachment', 'encrypted', 'signed', 'passed', 'replied', 'muted', 'mute', 'todo', 'Trash', 'voicemail'`. Some are special tags in notmuch and some are unsupported by GMail. See [Caveats](#caveats) below for more explanations. *Note:* This setting expects [_translated_ tags](#translation-between-labels-and-tags).
-  
-  *Important*: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
+**`Ignore tags (local)`** can be used to specify a list of tags which should not be synced from local to remote (e.g. [`new`](#usage)). In addition to the user-configured tags these tags are ignored: `'attachment', 'encrypted', 'signed', 'passed', 'replied', 'muted', 'mute', 'todo', 'Trash', 'voicemail'`. Some are special tags in notmuch and some are unsupported by GMail. See [Caveats](#caveats) below for more explanations. _Note:_ This setting expects [_translated_ tags](#translation-between-labels-and-tags).
 
-**`Ignore tags (remote)`** can be used to specify a list of tags (labels) which should not be synced from remote (GMail) to local. By default the [`CATEGORY_*` type](https://developers.google.com/gmail/api/guides/labels) labels which are mapped to the Personal/Promotions/etc tabs in the GMail interface are ignored. You can specify that no label should ignored by doing: `gmi set --ignore-tags-remote ""`. *Note:* This setting expects [_*un*translated_ tags](#translation-between-labels-and-tags).
-  
-  *Important*: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
+_Important_: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
+
+**`Ignore tags (remote)`** can be used to specify a list of tags (labels) which should not be synced from remote (GMail) to local. By default the [`CATEGORY_*` type](https://developers.google.com/gmail/api/guides/labels) labels which are mapped to the Personal/Promotions/etc tabs in the GMail interface are ignored. You can specify that no label should ignored by doing: `gmi set --ignore-tags-remote ""`. _Note:_ This setting expects [_*un*translated_ tags](#translation-between-labels-and-tags).
+
+_Important_: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
 
 **`Local Trash Tag (local)`** can be used to set the local tag to which the remote GMail 'TRASH' label is translated.
 
-  *Important*: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
+_Important_: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
 
 **`Translation List Overlay`** can be used to add or change entries in the translation mapping between local and remote tags. Argument is a comment-separated list with an even number of items. This is interpreted as a list of pairs of (remote, local), where each pair is added to the tag translation overwriting any existing translation for that tag if any. For example,
 `--translation-list-overlay CATEGORY_FORUMS,my_forum_tag` will translate Google's CATEGORY_FORUMS tag to my_forum_tag.')
 
-  *Important*: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
+_Important_: See note below on [changing this setting after initial sync](#changing-ignored-tags-and-translation-after-initial-sync).
 
 ## Changing ignored tags and translation after initial sync
 
@@ -206,7 +206,6 @@ Before changing either setting make sure you are fully synchronized. After chang
 When changing the opposite setting: `--ignore-tags-local`, do a full push (dry-run first): `gmi push -f --dry-run`.
 
 The same goes for the options `--replace-slash-with-dot` and `--local-trash-tag`. I prefer to do `gmi pull -f --dry-run` after changing this option. This will overwrite the local tags with the remote labels.
-
 
 # Translation between labels and tags
 
@@ -257,16 +256,16 @@ In any case, you can generate your own OAuth 2 credentials instead. This require
 1. [Create a project on GCP](https://cloud.google.com/resource-manager/docs/creating-managing-projects), or go to an existing one.
 2. [Enable access to the Gmail API](https://console.developers.google.com/flows/enableapi?apiid=gmail) for that GCP project
 3. [Configure the OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent), which involves naming your application (e.g. "Lieer Gmail Access") and setting other app-related metadata, most of which will be shown when you visit the OAuth 2 consent screen to give Lieer access to your Gmail account.
-    - The important piece is to make sure to configure the `https://mail.google.com/` scope for your application, otherwise Lieer won't be able to access the Gmail API on your behalf.
-    - You **don't** need to verify your application, you'll just get a scary warning about unverified applications when you go through the OAuth 2 flow, which you can safely ignore.
+   - The important piece is to make sure to configure the `https://mail.google.com/` scope for your application, otherwise Lieer won't be able to access the Gmail API on your behalf.
+   - You **don't** need to verify your application, you'll just get a scary warning about unverified applications when you go through the OAuth 2 flow, which you can safely ignore.
 4. [Create the OAuth 2 credentials](https://console.cloud.google.com/apis/credentials) by selecting 'Create Credentials' > 'OAuth client ID'.
-    - For `Application type`, select `Desktop app`
-    - For `Name`, name it `Lieer` or `gmi client` or something you'll recognize
+   - For `Application type`, select `Desktop app`
+   - For `Name`, name it `Lieer` or `gmi client` or something you'll recognize
 
 ![A screenshot of the GCP OAuth 2 credential creation dialog](/docs/create-credentials.png)
 
 5. [Download the credentials](https://console.cloud.google.com/auth/clients) by clicking the little download icon next to your newly created OAuth 2 client ID
-    - This will download the `client_secret.json` file you need for Lieer.
+   - This will download the `client_secret.json` file you need for Lieer.
 
 ![A screenshot of a mouse hovering over the "Download JSON" icon](/docs/download-json.png)
 
@@ -286,30 +285,29 @@ including the Limited Use requirements
 
 # Caveats
 
-* By default, notmuch adds the tags `inbox` and `unread` to all newly imported message. While setting `new.tags` in the notmuch config should change the initial tagging of messages, it seems as though `new.tags` can also be set in the notmuch database and this overrides the config file during Lieer pulls. To ensure `new.tags` are applied correctly, set them directly in the notmuch database using `notmuch config set --database new.tags <tags>` in addition to your local config file.
+- By default, notmuch adds the tags `inbox` and `unread` to all newly imported message. While setting `new.tags` in the notmuch config should change the initial tagging of messages, it seems as though `new.tags` can also be set in the notmuch database and this overrides the config file during Lieer pulls. To ensure `new.tags` are applied correctly, set them directly in the notmuch database using `notmuch config set --database new.tags <tags>` in addition to your local config file.
 
-* The GMail API does not let you sync `muted` messages. Until [this Google
-bug](https://issuetracker.google.com/issues/36759067) is fixed, the `mute` and `muted` tags are not synchronized with the remote.
+- The GMail API does not let you sync `muted` messages. Until [this Google
+  bug](https://issuetracker.google.com/issues/36759067) is fixed, the `mute` and `muted` tags are not synchronized with the remote.
 
-* The [`todo`](https://github.com/gauteh/lieer/issues/52) and [`voicemail`](https://github.com/gauteh/lieer/issues/74) labels seem to be reserved and will be ignored.
+- The [`todo`](https://github.com/gauteh/lieer/issues/52) and [`voicemail`](https://github.com/gauteh/lieer/issues/74) labels seem to be reserved and will be ignored.
 
-* The `draft` and `sent` labels are read only: They are synced from GMail to local notmuch tags, but not back (if you change them via notmuch).
+- The `draft` and `sent` labels are read only: They are synced from GMail to local notmuch tags, but not back (if you change them via notmuch).
 
-* [Only one of the tags](https://github.com/gauteh/lieer/issues/26) `inbox`, `spam`, and `trash` may be added to an email. For
-the time being, `trash` will be preferred over `spam`, and `spam` over `inbox`.
+- [Only one of the tags](https://github.com/gauteh/lieer/issues/26) `inbox`, `spam`, and `trash` may be added to an email. For
+  the time being, `trash` will be preferred over `spam`, and `spam` over `inbox`.
 
-* `Trash` (capital `T`) is reserved and not allowed, use `trash` (lowercase, see above) to bin messages remotely.
+- `Trash` (capital `T`) is reserved and not allowed, use `trash` (lowercase, see above) to bin messages remotely.
 
-* `archive` or `arxiv` are reserved and not allowed; see [issue/109](https://github.com/gauteh/lieer/issues/109) and [issue/171](https://github.com/gauteh/lieer/issues/171). To archive e-mails remove the `inbox` tag.
+- `archive` or `arxiv` are reserved and not allowed; see [issue/109](https://github.com/gauteh/lieer/issues/109) and [issue/171](https://github.com/gauteh/lieer/issues/171). To archive e-mails remove the `inbox` tag.
 
-* Sometimes GMail provides a label identifier on a message for a label that does not exist. If you encounter this [issue](https://github.com/gauteh/lieer/issues/48) you can get around it by using `gmi set --drop-non-existing-labels` and re-try to pull. The labels will now be ignored, and if this message is ever synced back up the unmapped label ID will be removed. You can list labels with `gmi pull -t`.
+- Sometimes GMail provides a label identifier on a message for a label that does not exist. If you encounter this [issue](https://github.com/gauteh/lieer/issues/48) you can get around it by using `gmi set --drop-non-existing-labels` and re-try to pull. The labels will now be ignored, and if this message is ever synced back up the unmapped label ID will be removed. You can list labels with `gmi pull -t`.
 
-* Sometimes GMail [indicates that there are more changes](https://github.com/gauteh/lieer/issues/120) when doing a partial pull, but an empty set is returned. The default is to fail, but you can ignore empty history by setting: `gmi set --ignore-empty-history`.
+- Sometimes GMail [indicates that there are more changes](https://github.com/gauteh/lieer/issues/120) when doing a partial pull, but an empty set is returned. The default is to fail, but you can ignore empty history by setting: `gmi set --ignore-empty-history`.
 
-* You [cannot add any new files](https://github.com/gauteh/lieer/issues/54) (files starting with `.` will be ignored) to the lieer repository. Lieer uses the directory content an index of local files. Lieer does not push new messages to your account (note that if you send messages with GMail, GMail automatically adds the message to your mailbox).
+- You [cannot add any new files](https://github.com/gauteh/lieer/issues/54) (files starting with `.` will be ignored) to the lieer repository. Lieer uses the directory content an index of local files. Lieer does not push new messages to your account (note that if you send messages with GMail, GMail automatically adds the message to your mailbox).
 
-* Make sure that you use the same domain for you GMail account as you initially created your account with: usually `@gmail.com`, but sometimes `@googlemail.com`. Otherwise you might get a [`Delegation denied` error](https://github.com/gauteh/lieer/issues/88).
-
+- Make sure that you use the same domain for you GMail account as you initially created your account with: usually `@gmail.com`, but sometimes `@googlemail.com`. Otherwise you might get a [`Delegation denied` error](https://github.com/gauteh/lieer/issues/88).
 
 # Development
 

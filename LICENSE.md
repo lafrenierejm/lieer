@@ -1,4 +1,3 @@
-
 “This program” is Lieer.
 
     Copyright (c) 2017  Gaute Hope <eg@gaute.vetsj.com>
@@ -17,4 +16,3 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 See COPYING.GPL-3.0+
-
