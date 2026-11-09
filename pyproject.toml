@@ -26,7 +26,11 @@ Homepage = "https://github.com/gauteh/lieer"
 gmi = "lieer.__main__:main"
 
 [dependency-groups]
-dev = ["pytest", "ruff"]
+dev = [
+    "pytest",
+    "ruff",
+    "ty>=0.0.99",
+]
 
 [build-system]
 requires = ["uv_build>=0.13.5,<0.14.0"]

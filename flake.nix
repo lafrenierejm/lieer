@@ -89,6 +89,19 @@
           # The ruff version pinned in uv.lock, so formatting matches `uv run ruff`.
           ruff = lib.addMetaAttrs { mainProgram = "ruff"; } pythonSet.ruff;
 
+          # ty pinned by uv.lock.
+          # Pointed at a virtualenv containing every dependency for resolving third-party imports.
+          tyEnv = pythonSet.mkVirtualEnv "lieer-ty-env" workspace.deps.all;
+          ty = pkgs.symlinkJoin {
+            name = "ty-${pythonSet.ty.version}";
+            paths = [ pythonSet.ty ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/ty --set VIRTUAL_ENV ${tyEnv}
+            '';
+            meta.mainProgram = "ty";
+          };
+
           editablePythonSet = pythonSet.overrideScope editableOverlay;
           inherit (pkgs.callPackages inputs.pyproject-nix.build.util { }) mkApplication;
         in
@@ -118,6 +131,10 @@
               ripsecrets.enable = true;
               trim-trailing-whitespace.enable = true;
               treefmt.enable = true;
+              ty = {
+                enable = true;
+                package = ty;
+              };
               typos.enable = true;
               zizmor.enable = true;
             };
