@@ -15,15 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import functools
 import json
 import os
 import time
 
 import googleapiclient
+import googleapiclient.errors
 from apiclient import discovery
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+
+
+def __require_auth__(func):
+    @functools.wraps(func)
+    def func_wrap(self, *args, **kwargs):
+        if not self.authorized:
+            self.authorize()
+        return func(self, *args, **kwargs)
+
+    return func_wrap
 
 
 class Remote:
@@ -133,14 +145,6 @@ class Remote:
         self.verbose = g.verbose
 
         self.ignore_labels = self.gmailieer.local.config.ignore_remote_labels
-
-    def __require_auth__(func):
-        def func_wrap(self, *args, **kwargs):
-            if not self.authorized:
-                self.authorize()
-            return func(self, *args, **kwargs)
-
-        return func_wrap
 
     def __wait_delay__(self):
         if self._delay:

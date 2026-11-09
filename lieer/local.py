@@ -23,6 +23,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import notmuch2
 
@@ -30,7 +31,7 @@ from .remote import Remote
 
 
 class Local:
-    wd = None
+    wd: str
     loaded = False
 
     # NOTE: Update README when changing this map.
@@ -121,17 +122,18 @@ class Local:
         pass
 
     class Config:
-        replace_slash_with_dot = False
-        account = None
-        timeout = 10 * 60
-        drop_non_existing_label = False
-        ignore_empty_history = False
-        ignore_tags = None
-        ignore_remote_labels = None
-        remove_local_messages = True
-        file_extension = None
-        local_trash_tag = "trash"
-        translation_list_overlay = None
+        json: dict[str, Any]
+        replace_slash_with_dot: bool = False
+        account: str
+        timeout: int = 10 * 60
+        drop_non_existing_label: bool = False
+        ignore_empty_history: bool = False
+        ignore_tags: set[str]
+        ignore_remote_labels: set[str]
+        remove_local_messages: bool = True
+        file_extension: str = ""
+        local_trash_tag: str = "trash"
+        translation_list_overlay: list[str]
 
         def __init__(self, config_f):
             self.config_f = config_f

@@ -25,7 +25,7 @@ class ResumePull:
     version = None
     VERSION = 1
 
-    meta_fetched = None
+    meta_fetched: list[str]
 
     @staticmethod
     def load(resume_file):

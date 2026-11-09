@@ -21,6 +21,7 @@
 import argparse
 import os
 import sys
+from typing import Any
 
 import googleapiclient
 import googleapiclient.errors
@@ -28,6 +29,9 @@ import notmuch2
 
 from .local import Local
 from .remote import Remote
+
+# Progress bar class; bound in `Gmailieer.setup` to either `tqdm.tqdm` or `.nobar.tqdm`.
+tqdm: Any
 
 
 class Gmailieer:
@@ -653,7 +657,7 @@ class Gmailieer:
 
     def partial_pull(self):
         # get history
-        bar = None
+        bar_created = False
         history = []
         last_id = self.remote.get_current_history_id(self.local.state.last_historyId)
 
@@ -661,8 +665,9 @@ class Gmailieer:
             for hist in self.remote.get_history_since(self.local.state.last_historyId):
                 history.extend(hist)
 
-                if bar is None:
+                if not bar_created:
                     self.bar_create(leave=True, desc="fetching changes")
+                    bar_created = True
 
                 self.bar_update(len(hist))
 
@@ -682,7 +687,7 @@ class Gmailieer:
             raise
 
         finally:
-            if bar is not None:
+            if bar_created:
                 self.bar_close()
 
         # figure out which changes need to be applied
@@ -713,8 +718,6 @@ class Gmailieer:
 
         if len(history) > 0:
             self.bar_create(total=len(history), leave=True, desc="resolving changes")
-        else:
-            bar = None
 
         for h in history:
             if "messagesAdded" in h:
@@ -778,7 +781,7 @@ class Gmailieer:
 
             self.bar_update(1)
 
-        if bar:
+        if len(history) > 0:
             self.bar_close()
 
         changed = False
@@ -840,7 +843,7 @@ class Gmailieer:
         message_gids = []
         last_id = self.remote.get_current_history_id(self.local.state.last_historyId)
 
-        resume_file = os.path.join(self.local.wd, ".resume-pull.gmailieer.json")
+        resume_file = os.path.join(str(self.local.wd), ".resume-pull.gmailieer.json")
 
         if not self.resume:
             if os.path.exists(resume_file):
@@ -947,7 +950,11 @@ class Gmailieer:
         """
 
         if len(msgids) > 0:
-            total = len(msgids) + len(previous.meta_fetched) if resume else len(msgids)
+            total = (
+                len(msgids) + len(previous.meta_fetched)
+                if resume and previous is not None
+                else len(msgids)
+            )
 
             self.bar_create(leave=True, total=total, desc="receiving metadata")
 
@@ -1029,7 +1036,7 @@ class Gmailieer:
         # check if in-reply-to is set and find threadId
         threadId = None
 
-        import email
+        import email.utils
 
         eml = email.message_from_bytes(msg)
 

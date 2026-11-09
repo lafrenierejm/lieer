@@ -68,7 +68,7 @@ class tqdm:
         self.end = time.perf_counter()
         print("done:", self.it, "its in", self.pp_duration(self.end - self.start))
 
-    def pp_duration(self, d=None):
+    def pp_duration(self, d: float):
         dys = floor(d / (24 * 60 * 60))
         d = d - (dys * 24 * 60 * 60)
 
